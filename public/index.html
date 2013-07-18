@@ -2,55 +2,24 @@
 	<head>
 		<title>Stat</title>
 
-		<style type="text/css">
-* { padding: 0; margin: 0; }
-LI {
-	list-style-position: inside;
-}
-
-#input { display: none; }
-
-#content {
-	max-width: 800px;
-	margin: auto;
-	padding: 20px;
-}
-
-#output {
-
-}
-
-.faculty {
-	margin-bottom: 40px;
-	clear: both; /*SMALL CLEARFIX*/
-}
-	.faculty-name {
-		margin-bottom: 10px;
-		font-size: 1.6em;
-		font-weight: bold;
-	}
-		.special {}
-			.special-item {
-				margin-bottom: 10px;
-				clear: both; /*SMALL CLEARFIX*/
-			}
-				.special-item SPAN {
-					padding: 5px;
-					float: left;
-					text-align: center;
-				}
-				.special-item SPAN B {
-					display: block;
-				}
-		</style>
+		<link href="http://fonts.googleapis.com/css?family=PT+Sans+Narrow:700&amp;subset=latin,cyrillic" rel="stylesheet" type="text/css">
+		<link href="css/main.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
 		<div id="content">
-			Таблица для 367 баллов
-			<div id="output">загрузка</div>
+			<h2>Сколько у тебя?</h2>
+			<input type="text" id="score" maxlength="3" autofocus="true">
+			<div id="output">
+				<img src="images/loader.gif" class="images-loader">
+			</div>
 		</div>
 
 		<div id="input"></div>
+
+		<footer>
+			<p>автор</p>
+			<a href="http://evgen.zhlobo.info/about/">Евгений Жлобо</a>
+		</footer>
 
 		<script type="text/javascript" src="js/main.js"></script>
 	</body>

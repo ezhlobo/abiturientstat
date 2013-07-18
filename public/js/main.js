@@ -5,6 +5,9 @@
 		proto = "prototype",
 		block_input = document.getElementById( "input" ),
 		block_output = document.getElementById( "output" ),
+		block_score = document.getElementById( "score" ),
+
+		score = 0,
 
 		str2id = function( str ) {
 			return str.replace( /^\s*|\s*$/g, "" );
@@ -38,12 +41,18 @@
 			endPosition: 0
 		};
 
-		function as( value) {
+		function as( value ) {
 			var that = this;
 
 			that.faculties = {};
 
-			options.endPosition = Math.floor( ( 1 - value / 400 ) / 0.025 );
+			if ( value >= 60 && value <= 100 ) {
+				options.endPosition = 30;
+			} else if ( value < 60 ) {
+				options.endPosition = 31;
+			} else {
+				options.endPosition = Math.floor( ( 1 - value / 400 ) / 0.025 );
+			}
 
 			that.mark = value;
 			that.analyzeData();
@@ -53,7 +62,6 @@
 		as[ proto ].showData = function() {
 			var html = "";
 			var faculties = this.faculties;
-			console.log( faculties );
 
 			for ( var facultyName in faculties ) {
 				if ( faculties.hasOwnProperty( facultyName ) ) {
@@ -66,14 +74,15 @@
 					for ( var specialName in faculty ) {
 						if ( faculty.hasOwnProperty( specialName ) ) {
 							var special = faculty[ specialName ];
+							var addclass = " class='zero'";
 
 							html += "<li class='special-item'>";
 							html += "<div class='special-name'>" + specialName + "</div>";
-							html += "<span><b>Без экзаменов</b>" + special.freaks + "</span>";
-							html += "<span><b>Больше баллы</b>" + special.high + "</span>";
-							html += "<span><b>Одинаковые баллы</b>" + special.similar + "</span>";
-							html += "<span><b>Больше баллы (село)</b>" + special.highRural + "</span>";
-							html += "<span><b>Одинаковые баллы (село)</b>" + special.similarRural + "</span>";
+							html += "<span" + (special.freaks === 0 ? addclass : "") + "><b>Без экзаменов</b>" + special.freaks + "</span>";
+							html += "<span" + (special.high === 0 ? addclass : "") + "><b>Больше баллы</b>" + special.high + "</span>";
+							html += "<span" + (special.similar === 0 ? addclass : "") + "><b>Одинаковые баллы</b>" + special.similar + "</span>";
+							html += "<span" + (special.highRural === 0 ? addclass : "") + "><b>Больше баллы (село)</b>" + special.highRural + "</span>";
+							html += "<span" + (special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы (село)</b>" + special.similarRural + "</span>";
 							html += "</li>";
 						}
 					}
@@ -143,8 +152,39 @@
 		return as;
 	})();
 
-	loadData(function() {
-		new AbiturientStat( 367 );
-	});
+	var checkKeypress = function( e ) {
+		if ( ( e.keyCode >= 48 /*0*/ && e.keyCode <= 57 /*9*/ ) || e.keyCode === 8 /*Esc*/ ) {
+			var value = this.value;
+
+			if ( loaded ) {
+				new AbiturientStat( value );
+			} else {
+				score = value;
+			}
+
+			localStorage.setItem( "score", value );
+		}
+	};
+
+	var checkKey = function( e ) {
+		if ( ( e.keyCode <= 48 /*0*/ && e.keyCode >= 57 /*9*/ ) || !e.keyCode === 8 ) {
+			return false;
+		}
+	};
+
+	var loadedCllb = function() {
+		new AbiturientStat( score );
+	};
+
+	block_score.addEventListener( "keyup", checkKeypress, false );
+	block_score.addEventListener( "keydown", checkKey, false );
+	block_score.addEventListener( "keypress", checkKey, false );
+
+	loadData( loadedCllb );
+
+	if ( localStorage.getItem( "score" ) ) {
+		block_score.blur();
+		block_score.value = localStorage.getItem( "score" );
+	}
 
 })( window );
