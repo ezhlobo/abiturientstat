@@ -3,7 +3,6 @@ require 'sinatra/json'
 require 'sinatra/namespace'
 
 require 'open-uri'
-require 'iconv'
 
 class AbiturientStat < Sinatra::Base
   register Sinatra::Namespace
@@ -16,10 +15,7 @@ class AbiturientStat < Sinatra::Base
       source = page.read.scan(/<table cellspacing="0" align="center">.*<\/table>/m)[0]
       parameters = page.content_type_parse
 
-      encoding = parameters.assoc('charset').last
-
-      converter = Iconv.new('UTF-8//IGNORE', encoding)
-      converter.iconv(source)
+      source.encode('UTF-8', invalid: :replace, undef: :replace, replace: '')
     end
   end
 
