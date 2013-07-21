@@ -118,7 +118,6 @@
 				var name = str2id( row.children[ 0 ].children[ 0 ].innerHTML );
 
 				that.faculties[ name ] = that._getSpeciality( row );
-				// that.faculties[ name ][ "name" ] = name;
 			}
 		};
 
@@ -188,13 +187,11 @@
 
 		localStorage.setItem( "score", value );
 	};
+	block_score.addEventListener( "keyup", checkKeypress, false );
 
 	var loadedCllb = function() {
 		new AbiturientStat( score );
 	};
-
-	block_score.addEventListener( "keyup", checkKeypress, false );
-
 	loadData( loadedCllb );
 
 	if ( localStorage.getItem( "score" ) ) {
