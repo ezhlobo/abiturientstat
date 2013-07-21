@@ -83,8 +83,6 @@
 							html += "<span" + (special.high === 0 && special.highRural === 0 ? addclass : "") + "><b>Больше баллы + село</b>" + special.high + " + " + special.highRural + "</span>";
 							html += "<span><b>Больше баллы / Количество мест</b>= " + (highest) + " / " + special.all + "</span>";
 							html += "<span" + (special.similar === 0 && special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы + село</b>" + special.similar + " + " + special.similarRural + "</span>";
-							// html += "<span" + (special.highRural === 0 ? addclass : "") + "><b>Больше баллы (село)</b>" + special.highRural + "</span>";
-							// html += "<span" + (special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы (село)</b>" + special.similarRural + "</span>";
 							html += "</li>";
 						}
 					}
@@ -171,34 +169,24 @@
 
 	var openFaculty = function(parent, item, id) {
 		parent.classList.remove("closed");
-		// item.innerHTML = "╳";
 		localStorage.setItem(id, "");
 	};
 
 	var closeFaculty = function(parent, item, id) {
 		parent.classList.add("closed");
-		// item.innerHTML = "+";
 		localStorage.setItem(id, "closed");
 	}
 
 	var checkKeypress = function( e ) {
-		if ( ( e.keyCode >= 48 /*0*/ && e.keyCode <= 57 /*9*/ ) || e.keyCode === 8 /*Esc*/ ) {
-			var value = this.value;
+		var value = this.value;
 
-			if ( loaded ) {
-				new AbiturientStat( value );
-			} else {
-				score = value;
-			}
-
-			localStorage.setItem( "score", value );
+		if ( loaded ) {
+			new AbiturientStat( value );
+		} else {
+			score = value;
 		}
-	};
 
-	var checkKey = function( e ) {
-		if ( ( e.keyCode <= 48 /*0*/ && e.keyCode >= 57 /*9*/ ) || !e.keyCode === 8 ) {
-			return false;
-		}
+		localStorage.setItem( "score", value );
 	};
 
 	var loadedCllb = function() {
@@ -206,8 +194,6 @@
 	};
 
 	block_score.addEventListener( "keyup", checkKeypress, false );
-	block_score.addEventListener( "keydown", checkKey, false );
-	block_score.addEventListener( "keypress", checkKey, false );
 
 	loadData( loadedCllb );
 
