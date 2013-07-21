@@ -62,27 +62,29 @@
 		as[ proto ].showData = function() {
 			var html = "";
 			var faculties = this.faculties;
+			var addclass = " class='zero'";
 
 			for ( var facultyName in faculties ) {
 				if ( faculties.hasOwnProperty( facultyName ) ) {
 					var faculty = faculties[ facultyName ];
 
-					html += "<div class='faculty'>";
-					html += "<div class='faculty-name'>" + facultyName + "</div>";
+					html += "<div class='faculty " + localStorage.getItem(facultyName) + "' data-id='" + facultyName + "'>";
+					html += "<div class='faculty-name'>" + facultyName + "<i class='faculty-close'></i></div>";
 					html += "<ul class='special'>";
 
 					for ( var specialName in faculty ) {
 						if ( faculty.hasOwnProperty( specialName ) ) {
 							var special = faculty[ specialName ];
-							var addclass = " class='zero'";
+							var highest = special.freaks + special.det + special.high + special.highRural;
 
-							html += "<li class='special-item'>";
+							html += "<li class='special-item " + (highest >= special.all ? "closed" : "opened" ) + "'>";
 							html += "<div class='special-name'>" + specialName + "</div>";
-							html += "<span" + (special.freaks === 0 ? addclass : "") + "><b>Без экзаменов</b>" + special.freaks + "</span>";
-							html += "<span" + (special.high === 0 ? addclass : "") + "><b>Больше баллы</b>" + special.high + "</span>";
-							html += "<span" + (special.similar === 0 ? addclass : "") + "><b>Одинаковые баллы</b>" + special.similar + "</span>";
-							html += "<span" + (special.highRural === 0 ? addclass : "") + "><b>Больше баллы (село)</b>" + special.highRural + "</span>";
-							html += "<span" + (special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы (село)</b>" + special.similarRural + "</span>";
+							html += "<span" + (special.freaks === 0 ? addclass : "") + "><b>Без экзаменов + Вне конкурса</b>" + special.freaks + " + " + special.det + "</span>";
+							html += "<span" + (special.high === 0 && special.highRural === 0 ? addclass : "") + "><b>Больше баллы + село</b>" + special.high + " + " + special.highRural + "</span>";
+							html += "<span><b>Больше баллы / Количество мест</b>= " + (highest) + " / " + special.all + "</span>";
+							html += "<span" + (special.similar === 0 && special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы + село</b>" + special.similar + " + " + special.similarRural + "</span>";
+							// html += "<span" + (special.highRural === 0 ? addclass : "") + "><b>Больше баллы (село)</b>" + special.highRural + "</span>";
+							// html += "<span" + (special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы (село)</b>" + special.similarRural + "</span>";
 							html += "</li>";
 						}
 					}
@@ -93,6 +95,20 @@
 			}
 
 			block_output.innerHTML = html;
+
+			var closeButtons = document.querySelectorAll(".faculty-close");
+			var clicked = function() {
+				var item = this;
+				var parent = item.parentElement.parentElement;
+				if( parent.classList.contains("closed") ) {
+					openFaculty( parent, item, parent.dataset.id );
+				} else {
+					closeFaculty( parent, item, parent.dataset.id );
+				}
+			};
+			for (var i = 0, l = closeButtons.length; i < l; i++) {
+				closeButtons[i].addEventListener("click", clicked, false)
+			}
 		};
 
 		as[ proto ].analyzeData = function() {
@@ -137,6 +153,7 @@
 					"name": str2id( title ),
 					"all":  str2num( next.children[ index + 1 ].innerHTML ),
 					"freaks": str2num( next.children[ 4 - 1 + index ].innerHTML ),
+					"det": str2num( next.children[ 5 - 1 + index ].innerHTML ),
 					"high": high,
 					"highRural": highRural,
 					"similar": similar,
@@ -151,6 +168,18 @@
 
 		return as;
 	})();
+
+	var openFaculty = function(parent, item, id) {
+		parent.classList.remove("closed");
+		// item.innerHTML = "╳";
+		localStorage.setItem(id, "");
+	};
+
+	var closeFaculty = function(parent, item, id) {
+		parent.classList.add("closed");
+		// item.innerHTML = "+";
+		localStorage.setItem(id, "closed");
+	}
 
 	var checkKeypress = function( e ) {
 		if ( ( e.keyCode >= 48 /*0*/ && e.keyCode <= 57 /*9*/ ) || e.keyCode === 8 /*Esc*/ ) {
@@ -184,7 +213,7 @@
 
 	if ( localStorage.getItem( "score" ) ) {
 		block_score.blur();
-		block_score.value = localStorage.getItem( "score" );
+		score = block_score.value = localStorage.getItem( "score" );
 	}
 
 })( window );
