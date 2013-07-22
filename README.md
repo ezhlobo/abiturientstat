@@ -1,5 +1,9 @@
 # AbiturientStat
 
+## Usage
+
+If you want to share your score with friends use `#`: [astat.losky.net/#100](http://astat.losky.net/#100).
+
 ## Development
 
 Install and run application:
