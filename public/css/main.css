@@ -1,46 +1,55 @@
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+/* reset.css */
+
+HTML, BODY, DIV, SPAN, APPLET, OBJECT, IFRAME,
+H1, H2, H3, H4, H5, H6, P, BLOCKQUOTE, PRE,
+A, ABBR, ACRONYM, ADDRESS, BIG, CITE, CODE,
+DEL, DFN, EM, IMG, INS, KBD, Q, S, SAMP,
+SMALL, STRIKE, STRONG, SUB, SUP, TT, VAR,
+B, U, I, CENTER,
+DL, DT, DD, OL, UL, LI,
+FIELDSET, FORM, LABEL, LEGEND,
+TABLE, CAPTION, TBODY, TFOOT, THEAD, TR, TH, TD,
+ARTICLE, ASIDE, CANVAS, DETAILS, EMBED,
+FIGURE, FIGCAPTION, FOOTER, HEADER, HGROUP,
+MENU, NAV, OUTPUT, RUBY, SECTION, SUMMARY,
+TIME, MARK, AUDIO, VIDEO {
     margin: 0;
     padding: 0;
     border: 0;
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
-}
+	}
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
+ARTICLE, ASIDE, DETAILS, FIGCAPTION, FIGURE,
+FOOTER, HEADER, HGROUP, MENU, NAV, SECTION {
     display: block;
-}
-body {
+	}
+BODY {
     line-height: 1;
-}
-ol, ul {
+	}
+OL, UL {
     list-style: none;
-}
-blockquote, q {
+	}
+BLOCKQUOTE, Q {
     quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
+	}
+BLOCKQUOTE:before, BLOCKQUOTE:after,
+Q:before, Q:after {
     content: '';
     content: none;
-}
-table {
+	}
+TABLE {
     border-collapse: collapse;
     border-spacing: 0;
-}
+	}
+
+/* main.css */
+
+BODY {
+	min-width: 680px;
+	position: relative;
+	}
 
 #input { display: none; }
 
@@ -48,8 +57,9 @@ table {
 	max-width: 800px;
 	margin: auto;
 	padding: 20px;
+	position: relative;
 	font-family: Arial;
-}
+	}
 	#content H2 {
 		text-align: center;
 		font-size: 60px;
@@ -59,7 +69,14 @@ table {
 
 		position: relative;
 		z-index: 3;
-	}
+		}
+	#content H2 B {
+		top: 55px;
+		left: 50%;
+		margin-left: 75px;
+		position: absolute;
+		font-size: 12px;
+		}
 	#score {
 		width: 150px;
 		margin: 20px auto 40px;
@@ -76,22 +93,18 @@ table {
 
 		position: relative;
 		z-index: 2;
-	}
+		}
 	#score:focus {
 		border-color: #999;
-		box-shadow: 0 3px 5px #ccc, inset 0 -2px 2px #f0f0f0, 0 0 5000px rgba(0, 0, 0, 0.8);
-	}
-
-#output {
-
-}
+		box-shadow: 0 3px 5px #ccc, inset 0 -1px 2px #bbb;
+		}
 
 .images-loader {
 	width: 32px;
 	height: 32px;
 	margin: -20px auto 20px;
 	display: block;
-}
+	}
 
 .faculty {
 	padding: 30px 40px;
@@ -101,57 +114,55 @@ table {
 	background: #F4F4F4;
 	border-radius: 15px;
 
+	box-shadow: inset 0 0 0 1px #fff;
+
 	z-index: 1;
-}
+	}
 .faculty:last-child(1) {
 	margin-bottom: 0;
-}
+	}
 .faculty.closed .special {
 	display: none;
-}
+	}
 	.faculty-name {
 		font-size: 1.6em;
 		text-shadow: 1px 1px 0 #fff;
 		font-family: "PT Sans Narrow", "Trebuchet MS", Arial;
-	}
+		}
 		.faculty-close {
-			width: 23px;
+			opacity: 0.2;
+			width: 22px;
 			height: 22px;
-			/*padding: 6px 5px 3px;*/
 			top: 30px;
 			right: 20px;
 			position: absolute;
 			display: block;
 			background: url(../images/close.png) no-repeat 50%;
-			font-size: 13px;
-			line-height: 25px;
-			text-align: center;
 			cursor: pointer;
-		}
+			}
 		.faculty.closed .faculty-close {
 			background: url(../images/plus.png) no-repeat 50%;
-			font-size: 25px;
-			color: rgba(0, 0, 0, 0.3);
-		}
+			}
 		.faculty-close:hover {
+			opacity: 1;
 			background-color: #FFF !important;
 	        border-radius: 5px;
-		}
+			}
 		.special {
 			color: #333;
-		}
+			}
 			.special-item {
 				margin-top: 10px;
 				clear: both;
-			}
+				}
 			.special-item.closed SPAN:nth-child(4) {
 				background: rgba(255, 0, 0, 0.3);
 				border-right-color: transparent;
-			}
+				}
 			.special-item.opened SPAN:nth-child(4) {
 				background: rgba(0, 255, 0, 0.3);
 				border-right-color: transparent;
-			}
+				}
 			.special-item:after {
 				content: ".";
 				display: block;
@@ -159,13 +170,13 @@ table {
 				visibility: hidden;
 				line-height: 0;
 				height: 0;
-			}
+				}
 				.special-name {
 					margin-bottom: 3px;
-				}
+					}
 				.special-item .zero {
 					opacity: 0.2;
-				}
+					}
 				.special-item SPAN {
 					width: 25%;
 					padding: 5px;
@@ -175,12 +186,12 @@ table {
 					text-align: center;
 					font-size: 11px;
 					box-sizing: border-box;
-				}
+					}
 				.special-item SPAN B {
 					height: 25px;
 					display: block;
 					font-weight: bold;
-				}
+					}
 
 FOOTER {
 	margin: 0 0 20px;
@@ -190,12 +201,12 @@ FOOTER {
 	font-weight: bold;
 	line-height: 20px;
 	color: #999;
-}
+	}
 	FOOTER A {
 		color: #00F;
 		text-decoration: none;
 		border-bottom: 1px solid #00F;
-	}
+		}
 	FOOTER A:hover {
 		text-decoration: none;
-	}
+		}
