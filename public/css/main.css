@@ -51,6 +51,20 @@ BODY {
 	position: relative;
 	}
 
+A {
+	color: #00F;
+	line-height: 1.1em;
+	text-decoration: none;
+	border-bottom: 1px solid #00F;
+	}
+A:hover {
+	text-decoration: none;
+	}
+
+STRONG {
+	font-weight: bold;
+	}
+
 #input { display: none; }
 
 #content {
@@ -97,6 +111,16 @@ BODY {
 	#score:focus {
 		border-color: #999;
 		box-shadow: 0 3px 5px #ccc, inset 0 -1px 2px #bbb;
+		}
+
+.description {
+	padding: 0 41px;
+	position: relative;
+	margin-bottom: 40px;
+	line-height: 1.5em;
+	}
+	.description STRONG {
+		color: #DC143C;
 		}
 
 .images-loader {
@@ -202,11 +226,3 @@ FOOTER {
 	line-height: 20px;
 	color: #999;
 	}
-	FOOTER A {
-		color: #00F;
-		text-decoration: none;
-		border-bottom: 1px solid #00F;
-		}
-	FOOTER A:hover {
-		text-decoration: none;
-		}
