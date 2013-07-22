@@ -1,38 +1,44 @@
 (function( window ) {
 
 	var
+		// Optimize document variable
 		document = window.document,
-		proto = "prototype",
-		block_input = document.getElementById( "input" ),
-		block_output = document.getElementById( "output" ),
-		block_score = document.getElementById( "score" ),
 
+		// DOM elements
+		b_input = document.getElementById( "input" ),
+		b_output = document.getElementById( "output" ),
+		b_score = document.getElementById( "score" ),
+
+		// Your score by default
 		score = 0,
 
+		// Convert string to id
 		str2id = function( str ) {
 			return str.replace( /^\s*|\s*$/g, "" );
 		},
+
+		// Convert string to number
 		str2num = function( str ) {
 			return parseFloat( str ) || 0;
-		};
+		},
 
-	var loaded = false;
-	var loadData = function( callback ) {
-		if ( loaded ) return;
+		dataLoaded = false,
+		loadData = function( callback ) {
+			if ( dataLoaded ) return;
 
-		var xmlhttp = new XMLHttpRequest();
+			var xmlhttp = new XMLHttpRequest();
 
-		xmlhttp.onreadystatechange = function() {
-			if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-				loaded = true;
-				block_input.innerHTML = xmlhttp.responseText;
-				callback();
+			xmlhttp.onreadystatechange = function() {
+				if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
+					dataLoaded = true;
+					b_input.innerHTML = xmlhttp.responseText;
+					callback();
+				}
 			}
-		}
 
-		xmlhttp.open( "GET", "backend/table" );
-		xmlhttp.send();
-	};
+			xmlhttp.open( "GET", "backend/table" );
+			xmlhttp.send();
+		};
 
 	var AbiturientStat = (function() {
 		var options = {
@@ -47,110 +53,137 @@
 			that.faculties = {};
 
 			if ( value >= 60 && value <= 100 ) {
+				// Pre-last cell
 				options.endPosition = 30;
 			} else if ( value < 60 ) {
+				// Last cell
 				options.endPosition = 31;
 			} else {
+				// Find cell according to your score
 				options.endPosition = Math.floor( ( 1 - value / 400 ) / 0.025 );
 			}
 
 			that.mark = value;
-			that.analyzeData();
+
+			// Get 'this.faculties' object
+			that.parseData();
+
+			// Show table with analyzed data
 			that.showData();
 		}
 
-		as[ proto ].showData = function() {
-			var html = "";
-			var faculties = this.faculties;
-			var addclass = " class='zero'";
+		as.prototype.showData = function() {
+			var facultyName,
+				html = "",
+				faculties = this.faculties,
+				addclass = " class='zero'";
 
-			for ( var facultyName in faculties ) {
-				if ( faculties.hasOwnProperty( facultyName ) ) {
-					var faculty = faculties[ facultyName ];
+			// Faculty template
+			for ( facultyName in faculties ) {
+				var spceialName,
+					faculty = faculties[ facultyName ];
 
-					html += "<div class='faculty " + localStorage.getItem(facultyName) + "' data-id='" + facultyName + "'>";
-					html += "<div class='faculty-name'>" + facultyName + "<i class='faculty-close'></i></div>";
-					html += "<ul class='special'>";
+				html += "<div class='faculty " + localStorage.getItem( facultyName ) + "' data-id='" + facultyName + "'>";
+				html += "<div class='faculty-name'>" + facultyName + "<i class='faculty-close'></i></div>";
+				html += "<ul class='special'>";
 
-					for ( var specialName in faculty ) {
-						if ( faculty.hasOwnProperty( specialName ) ) {
-							var special = faculty[ specialName ];
-							var highest = special.freaks + special.det + special.high + special.highRural;
+				// Specialty template
+				for ( specialName in faculty ) {
+					var
+						special = faculty[ specialName ],
+						highest = special.freaks + special.exempts + special.high + special.highRural;
 
-							html += "<li class='special-item " + (highest >= special.all ? "closed" : "opened" ) + "'>";
-							html += "<div class='special-name'>" + specialName + "</div>";
-							html += "<span" + (special.freaks === 0 ? addclass : "") + "><b>Без экзаменов + Вне конкурса</b>" + special.freaks + " + " + special.det + "</span>";
-							html += "<span" + (special.high === 0 && special.highRural === 0 ? addclass : "") + "><b>Больше баллы + село</b>" + special.high + " + " + special.highRural + "</span>";
-							html += "<span><b>Больше баллы / Количество мест</b>= " + (highest) + " / " + special.all + "</span>";
-							html += "<span" + (special.similar === 0 && special.similarRural === 0 ? addclass : "") + "><b>Одинаковые баллы + село</b>" + special.similar + " + " + special.similarRural + "</span>";
-							html += "</li>";
-						}
-					}
-
-					html += "</ul>";
-					html += "</div>";
+					html += "<li class='special-item " + ( highest >= special.all ? "closed" : "opened" ) + "'>";
+					html += "<div class='special-name'>" + specialName + "</div>";
+					html += "<span" + ( special.freaks === 0 ? addclass : "" ) + "><b>Без экзаменов + Вне конкурса</b>" + special.freaks + " + " + special.exempts + "</span>";
+					html += "<span" + ( special.high === 0 && special.highRural === 0 ? addclass : "" ) + "><b>Больше баллы + село</b>" + special.high + " + " + special.highRural + "</span>";
+					html += "<span><b>Больше баллы / Количество мест</b>= " + highest + " / " + special.all + "</span>";
+					html += "<span" + ( special.similar === 0 && special.similarRural === 0 ? addclass : "" ) + "><b>Одинаковые баллы + село</b>" + special.similar + " + " + special.similarRural + "</span>";
+					html += "</li>";
 				}
+
+				html += "</ul>";
+				html += "</div>";
 			}
 
-			block_output.innerHTML = html;
+			b_output.innerHTML = html;
 
-			var closeButtons = document.querySelectorAll(".faculty-close");
-			var clicked = function() {
-				var item = this;
-				var parent = item.parentElement.parentElement;
-				if( parent.classList.contains("closed") ) {
-					openFaculty( parent, item, parent.dataset.id );
-				} else {
-					closeFaculty( parent, item, parent.dataset.id );
-				}
-			};
-			for (var i = 0, l = closeButtons.length; i < l; i++) {
-				closeButtons[i].addEventListener("click", clicked, false)
+			var
+				closeButtons = document.querySelectorAll(".faculty-close"),
+				openBlockFaculty = function( parent, id ) {
+					parent.classList.remove( "closed" );
+					localStorage.setItem( id, "" );
+				},
+				closeBlockFaculty = function( parent, id ) {
+					parent.classList.add( "closed" );
+					localStorage.setItem( id, "closed" );
+				},
+				closeButtonClicked = function() {
+					var parent = this.parentElement.parentElement;
+
+					if( parent.classList.contains( "closed" ) ) {
+						openBlockFaculty( parent, parent.dataset.id );
+					} else {
+						closeBlockFaculty( parent, parent.dataset.id );
+					}
+				},
+				i = 0,
+				l = closeButtons.length;
+
+			for ( ; i < l; i++ ) {
+				closeButtons[ i ].addEventListener( "click", closeButtonClicked, false );
 			}
 		};
 
-		as[ proto ].analyzeData = function() {
-			var that = this;
-			var rows = document.querySelectorAll( "#input .thead + .thead + tr" );
+		as.prototype.parseData = function() {
+			var
+				that = this,
+				rows = document.querySelectorAll( "#input .thead + .thead + tr" ),
+				i = 0,
+				l = rows.length;
 
-			for ( var i = 0, l = rows.length; i < l; i++ ) {
-				var row = rows[ i ];
-				var name = str2id( row.children[ 0 ].children[ 0 ].innerHTML );
+			for ( ; i < l; i++ ) {
+				var
+					row = rows[ i ],
+					name = str2id( row.children[ 0 ].children[ 0 ].innerHTML );
 
 				that.faculties[ name ] = that._getSpeciality( row );
 			}
 		};
 
-		as[ proto ]._getSpeciality = function( row ) {
-			var out = {};
-
-			var next = row;
-			var k = 0;
+		as.prototype._getSpeciality = function( row ) {
+			var
+				out = {},
+				next = row,
+				k = 0;
 
 			while ( !next.classList.contains( "all" ) ) {
-				var index = k++ === 0 ? 1 : 0;
-				var title = next.children[ index ].innerHTML;
+				var
+					index = k++ === 0 ? 1 : 0,
+					title = next.children[ index ].innerHTML,
 
-				var high = 0;
-				var highRural = 0;
-				var similar = 0;
-				var similarRural = 0;
+					high = 0,
+					highRural = 0,
+					similar = 0,
+					similarRural = 0,
 
-				var n = options.endPosition;
-				for ( var i = 0; i < n; i++ ) {
-					high += str2num( next.children[ i + options.startPosition - 1 + index ].innerHTML );
+					n = options.endPosition,
+					i = 0;
+
+				for ( ; i < n; i++ ) {
+					high += str2num( next.children[ i + options.startPosition + ( - 1 + index ) ].innerHTML );
 					highRural += str2num( next.nextElementSibling.children[ i + options.startRuralPosition ].innerHTML ) ;
 				}
 
 
-				similar = str2num( next.children[ options.endPosition + options.startPosition - 1 + index ].innerHTML );
-				similarRural = str2num( next.nextElementSibling.children[ options.endPosition + options.startRuralPosition - 1 + index ].innerHTML );
+				similar = str2num( next.children[ options.endPosition + options.startPosition + ( - 1 + index ) ].innerHTML );
+				similarRural = str2num( next.nextElementSibling.children[ options.endPosition + options.startRuralPosition + ( - 1 + index ) ].innerHTML );
 
 				out[ str2id( title ) ] = {
 					"name": str2id( title ),
 					"all":  str2num( next.children[ index + 1 ].innerHTML ),
-					"freaks": str2num( next.children[ 4 - 1 + index ].innerHTML ),
-					"det": str2num( next.children[ 5 - 1 + index ].innerHTML ),
+					"freaks": str2num( next.children[ 4 + ( - 1 + index ) ].innerHTML ),
+					"exempts": str2num( next.children[ 5 + ( - 1 + index ) ].innerHTML ),
 					"high": high,
 					"highRural": highRural,
 					"similar": similar,
@@ -166,20 +199,20 @@
 		return as;
 	})();
 
-	var openFaculty = function(parent, item, id) {
-		parent.classList.remove("closed");
-		localStorage.setItem(id, "");
-	};
+	loadData(function() {
+		new AbiturientStat( score );
+	});
 
-	var closeFaculty = function(parent, item, id) {
-		parent.classList.add("closed");
-		localStorage.setItem(id, "closed");
+	// Don't propose to enter data if user already use this site
+	if ( localStorage.getItem( "score" ) ) {
+		b_score.blur();
+		score = b_score.value = localStorage.getItem( "score" );
 	}
 
 	var checkKeypress = function( e ) {
 		var value = this.value;
 
-		if ( loaded ) {
+		if ( dataLoaded ) {
 			new AbiturientStat( value );
 		} else {
 			score = value;
@@ -187,16 +220,8 @@
 
 		localStorage.setItem( "score", value );
 	};
-	block_score.addEventListener( "keyup", checkKeypress, false );
 
-	var loadedCllb = function() {
-		new AbiturientStat( score );
-	};
-	loadData( loadedCllb );
 
-	if ( localStorage.getItem( "score" ) ) {
-		block_score.blur();
-		score = block_score.value = localStorage.getItem( "score" );
-	}
+	b_score.addEventListener( "keyup", checkKeypress, false );
 
 })( window );
