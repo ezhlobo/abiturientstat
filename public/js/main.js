@@ -3,6 +3,7 @@
 	var
 		// Optimize document variable
 		document = window.document,
+		location = window.location,
 
 		// DOM elements
 		b_input = document.getElementById( "input" ),
@@ -11,6 +12,13 @@
 
 		// Your score by default
 		score = 0,
+
+		// Save score
+		setScore = function( value ) {
+			window.location.hash = value;
+			b_score.value = value;
+			localStorage.setItem( "score", value );
+		},
 
 		// Convert string to id
 		str2id = function( str ) {
@@ -203,25 +211,38 @@
 		new AbiturientStat( score );
 	});
 
+	// Don't propose to enter data if user use a permanent link
+	if ( location.hash ) {
+		b_score.blur();
+		score = b_score.value = location.hash.replace( /^#/, "" );
+	} else
 	// Don't propose to enter data if user already use this site
 	if ( localStorage.getItem( "score" ) ) {
 		b_score.blur();
 		score = b_score.value = localStorage.getItem( "score" );
 	}
 
-	var checkKeypress = function( e ) {
-		var value = this.value;
-
+	var addNewScore = function( value ) {
 		if ( dataLoaded ) {
 			new AbiturientStat( value );
 		} else {
 			score = value;
 		}
 
-		localStorage.setItem( "score", value );
+		setScore( value );
 	};
 
+	var keyHandler = function() {
+		addNewScore( this.value );
+	};
 
-	b_score.addEventListener( "keyup", checkKeypress, false );
+	var hashHandler = function() {
+		addNewScore( location.hash.replace( /^#/, "" ) );
+	};
+
+	b_score.addEventListener( "keyup", keyHandler, false );
+
+	// Change table if user change window hash
+	window.addEventListener( "hashchange", hashHandler, false );
 
 })( window );
